@@ -69,7 +69,7 @@ def main():
     #directory_path = u"E:\\rename-project\\D-All-Torr\\tracker.what.cd\\"
     #directory_path = u"D:\\RandomMisc\\ABC - filetime fakedata\\"
     #directory_path = u"C:\\uTorrents\\2\\finished\\"
-    directory_path = u"E:\\rename-project\\seeding10-7\\"
+    directory_path = u"E:\\rename-project\\seeding\\"
 
     files = [os.path.join(directory_path,fn) for fn in next(os.walk(directory_path))[2]]        #gives absolute paths + names
 
@@ -107,38 +107,38 @@ def main():
     # writelistfile.close()
 
     #------Idea 3---------
-    # writelistfile = codecs.open(u"E:\\rename-project\\seeding10-7_TorrNameHash.txt",'wb',"utf-8") # write-out a text file with [filename,internalname,infohash]
+    # writelistfile = codecs.open(u"E:\\rename-project\\seeding_TorrNameHash.txt",'wb',"utf-8") # write-out a text file with [filename,internalname,infohash]
     # for eachline in container:
     #     writelistfile.write(eachline[0] + u" / " + eachline[1] + " / " + eachline[2] + "\n")
     # writelistfile.close()
-    # writelistfile = codecs.open(u"E:\\rename-project\\seeding10-7_NameTorrHash.txt",'wb',"utf-8") # write-out a text file with [internalname,filename,infohash]
+    # writelistfile = codecs.open(u"E:\\rename-project\\seeding_NameTorrHash.txt",'wb',"utf-8") # write-out a text file with [internalname,filename,infohash]
     # for eachline in container:
     #     writelistfile.write(eachline[1] + u" / " + eachline[0] + " / " + eachline[2] + "\n")
     # writelistfile.close()
-    # writelistfile = codecs.open(u"E:\\rename-project\\seeding10-7_HashTorrName.txt",'wb',"utf-8") # write-out a text file with [infohash,filename,internalname]
+    # writelistfile = codecs.open(u"E:\\rename-project\\seeding_HashTorrName.txt",'wb',"utf-8") # write-out a text file with [infohash,filename,internalname]
     # for eachline in container:
     #     writelistfile.write(eachline[2] + u" / " + eachline[0] + " / " + eachline[1] + "\n")
     # writelistfile.close()
-    writelistfile = codecs.open(u"E:\\rename-project\\seeding10-7_Hash_-_Torr.txt",'wb',"utf-8") # write-out a text file with [infohash \n filename]
+    writelistfile = codecs.open(u"E:\\rename-project\\seeding_Hash_-_Torr.txt",'wb',"utf-8") # write-out a text file with [infohash \n filename]
     for eachline in container:
         writelistfile.write(eachline[2] + "\n")
         writelistfile.write(eachline[0] + "\n")
     writelistfile.close()
 
     #------Idea 4---------
-    # writelistfile = codecs.open(u"E:\\rename-project\\seeding10-7_TorrentName+ID.txt",'wb',"utf-8") # write-out a text file with only filename(includes ID)
+    # writelistfile = codecs.open(u"E:\\rename-project\\seeding_TorrentName+ID.txt",'wb',"utf-8") # write-out a text file with only filename(includes ID)
     # for eachline in container:
     #     writelistfile.write(eachline[0] + "\n")
     # writelistfile.close()
 
     #------Idea 5---------
-    # writelistfile = codecs.open(u"E:\\rename-project\\seeding10-7-HashOnly.txt",'wb',"utf-8") # write-out a text file with only infohash
+    # writelistfile = codecs.open(u"E:\\rename-project\\seeding-HashOnly.txt",'wb',"utf-8") # write-out a text file with only infohash
     # for eachline in container:
     #     writelistfile.write(eachline[2] + "\n")
     # writelistfile.close()
 
     #------Idea 6---------
-    writelistfile = codecs.open(u"E:\\rename-project\\seeding10-7-IDOnly.txt",'wb',"utf-8") # write-out a text file with only ID
+    writelistfile = codecs.open(u"E:\\rename-project\\seeding-IDOnly.txt",'wb',"utf-8") # write-out a text file with only ID
     for eachline in container:
         locextension = eachline[0].find(".torrent")           #location of extension
         locid = eachline[0].rfind("-")+1                      #location of torrentID

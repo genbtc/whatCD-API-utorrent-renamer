@@ -159,7 +159,7 @@ def getUniqueWords(iterable):
     
 
 def main():
-    hashtorrlistfile = u"E:\\rename-project\\seeding10-7_Hash_-_Torr.txt"
+    hashtorrlistfile = u"E:\\rename-project\\seeding_Hash_-_Torr.txt"
     directory_path = u"E:\\rename-project\\hash-grabs\\"    #needs a unicode symbol so os. commands work at all on paths with funny chars
     allfiles = [os.path.join(directory_path,fn) for fn in next(os.walk(directory_path))[2]]        #gives absolute paths + names
 

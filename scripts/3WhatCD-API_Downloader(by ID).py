@@ -35,8 +35,8 @@ def main():
     apihandle = whatapi.WhatAPI(config_file=None,username=username,password=password,cookies=cookies)
     
     #Can use hashes instead of torrentID if you use the word "hash" instead of "id" in the query
-    filenamewithIDs  = "E:\\rename-project\\seeding10-7-IDOnly.txt"
-    hashdir="E:\\rename-project\\hash-grabs2-ID\\"      #output dir
+    filenamewithIDs  = "E:\\rename-project\\seeding-IDOnly.txt"
+    hashdir="E:\\rename-project\\hash-grabs\\"      #output dir
 
     with open(filenamewithIDs,'r') as f:
         for currentID in islice(f.read().splitlines(),currentline,None):     #will continue where it left off
