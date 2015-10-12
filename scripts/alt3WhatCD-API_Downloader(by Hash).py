@@ -8,7 +8,7 @@
 #
 # All original code by genBTC, 10/7/2015, version 0.1
 #
-# Alternate Script #3: Run alt3WhatCD-API_Downloader(by Hash).py to manually query the what.CD API by infoHash and pull down a response as JSON and dump to files
+# Alternate Script #3: Run alt3WhatCD-API_Downloader(by Hash).py to query the what.CD API by infoHash and pull down a response as JSON and dump to files
 #
 # whatapi was edited slightly to change time.sleep(2) to be time.sleep(0) when issuing a request
 # # Querying Based on ID's is WAYYY faster.. (46 requests in 60sec) vs. 20-22 items per minute with hash as a query

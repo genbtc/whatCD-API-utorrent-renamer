@@ -8,7 +8,7 @@
 #
 # All original code by genBTC, 10/7/2015, version 0.1
 #
-# Script #3: Run 3WhatCD-API_Downloader(by ID).py to manually query the what.CD API by torrentID and pull down a response as JSON and dump to files
+# Script #3: Run 3WhatCD-API_Downloader(by ID).py to query the what.CD API by torrentID and pull down a response as JSON and dump to files
 #
 # Querying Based on ID's is WAYYY faster.. Able to hit 46 requests in a minute with time.sleep(1)...... need to increase wait time a little.
 #napkin calculations:

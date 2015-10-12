@@ -8,9 +8,9 @@
 # Version 0.1 - functional since 10/9/2015.
 #
 # Script #4: Renames all your what.cd downloads to have a proper and uniform name.
-#
-#This program takes the results of Script #1,#2,#3 and iterates through, to re-build  from scratch the desired filename.
-#This was built specific to my needs, the what and why of which needs explaining :
+#       All naming decisions happen here. You should/must edit this file to suit yourself, especially "Sorted_Record_Labels_List" 
+#       This program takes the results of Script #1,#2,#3 and re-builds from scratch the desired filename.
+#       This was built specific to my needs, the what and why of which needs explaining:
 # FUNCTIONALITY notes:
 #
 #   1. The Sorted_Record_Labels_List is a list of record labels that I wish to store SORTED by the catalog number such as [DMZ001] (at the start of the filename)
