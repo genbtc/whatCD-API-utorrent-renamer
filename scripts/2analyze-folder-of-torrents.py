@@ -138,12 +138,12 @@ def main():
     # writelistfile.close()
 
     #------Idea 6---------
-    writelistfile = codecs.open(u"E:\\rename-project\\seeding-IDOnly.txt",'wb',"utf-8") # write-out a text file with only ID
+    writelistfile = codecs.open(u"E:\\rename-project\\seeding-ID+Hash.txt",'wb',"utf-8") # write-out a text file with only ID
     for eachline in container:
         locextension = eachline[0].find(".torrent")           #location of extension
         locid = eachline[0].rfind("-")+1                      #location of torrentID
         torrentid = eachline[0][locid:locextension]      #grab torrentID 
-        writelistfile.write(torrentid + "\n")
+        writelistfile.write(torrentid + " / " + eachline[2] + "\n")     #output ID / Hash
     writelistfile.close()
 
 

@@ -47,7 +47,7 @@ The naming decisions take place in Script 4 and contain MY DEFAULTS. In the futu
    While you are waiting for script 3, open Script #4 and start reading the comments/documentation
    At this point you will need to figure out the renaming pattern I scripted, and modify it to suit yourself.
    
-8. Run Script 4. It will generate a text file, which you should check, and then run Script 5.
+8. Run Script 4. It will generate a text file containing the newly decided names, which you should check, and then run Script 5.
 
 9. Shut down uTorrent, back-up your resume.dat file, and replace it with the file NEWDAT.dat that was created.
 

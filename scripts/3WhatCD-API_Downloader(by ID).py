@@ -35,11 +35,15 @@ def main():
     apihandle = whatapi.WhatAPI(config_file=None,username=username,password=password,cookies=cookies)
     
     #Can use hashes instead of torrentID if you use the word "hash" instead of "id" in the query
-    filenamewithIDs  = "E:\\rename-project\\seeding-IDOnly.txt"
+    filenamewithIDs  = "E:\\rename-project\\seeding-ID+Hash.txt"
     hashdir="E:\\rename-project\\hash-grabs\\"      #output dir
 
-    with open(filenamewithIDs,'r') as f:
-        for currentID in islice(f.read().splitlines(),currentline,None):     #will continue where it left off
+    openedfile = open(filenamewithIDs,'r').readlines()
+    for eachline in islice(openedfile,currentline,None):     #will continue where it left off
+        idandhash = eachline.strip().split(' / ')
+        currentID = idandhash[0]
+        currentHash = idandhash[1]        
+        if not os.path.exists(os.path.join(hashdir,currentHash)):
             try:
                 response = apihandle.request(1.75, "torrent", id=currentID)["response"]       #talk to server and receive a response
             except whatapi.RequestException as e:
