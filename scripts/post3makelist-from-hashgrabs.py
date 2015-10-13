@@ -6,8 +6,8 @@
 # Code by genBTC. Created from scratch 10/6/2015.  Relies on other pre-requisite steps that I scripted also.
 #   
 # Version 0.1 - functional since 10/9/2015.
-# Preliminary program to make a list of hashes and proper names to be used later. 
-# Can be then combined into the actual rename script later once this works
+#
+# Preliminary program to make a list of hashes and proper names to be used later.
 
 import os
 import json

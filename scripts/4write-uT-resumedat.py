@@ -7,7 +7,7 @@
 #   
 # Version 0.1 - functional since 10/10/2015.
 #
-# Script #5 - Make a new Resume.dat and commit the move/rename operations to disk
+# Script #4 - Make a new Resume.dat and commit the move/rename operations to disk
 #
 #Take the newly created proper names and open the Utorrent Resume.dat file and carefully replace the visual "Caption", and the actual path location.
 #theoretically you could only replace the path, but then if you use "Set download location" to move the download to a new parent folder in the future,
@@ -19,13 +19,7 @@
 # Only then does it move the folders on the filesystem (btw, its actually a rename operation = very fast).
 #
 #Notes: This script was not very forgiving with the filename rename process: I think there should be some sort of better error handling, resume-on-error, undo, rollback or etc...
-#
-#NOTE #1: <<<<<<<<<<<<<<<<<<<<<<<<<<<<<IMPORTANT>>>>>>>>>>>>>>>>>>>>>>>>>
-#    TO UNDO: ...=(if anything goes wrong halfway through running this, follow the undo process IMMEDIATELY !!!)
-#             Switch the 0 and 1 in the "before" and "after" variables [line 99&100] and run script again. THEN debug the issue. 
-#             Do not manually change a filename to anything other than the beforepath or afterpath listed in the listfile
-#
-
+#INFO:  Some fixes have been attemped.
 
 import base64
 import bencode
@@ -37,7 +31,6 @@ import traceback
 def main():
     #testdat = "E:\\rename-project\\EntireDAT.dat"
     olddat = "C:\\Users\\EOFL\\AppData\\Roaming\\uTorrent\\resume.dat"
-
     oldfile = open(olddat,'rb').read()
 
     newfile = open("E:\\rename-project\\NEWDAT.dat",'wb')
@@ -105,10 +98,8 @@ def main():
                #prints a number to console to show progress
                 print i+1     #corresponds to the numbers in the file (every-two-lines).  tip: to show incremental numbers use (((i+1)/2)+1)
                 os.rename(before, after)    #do not try and print filenames to console, because the windows console is not unicode compatible!!!! (afaik - annoying to say the least.)
-                #pass
             except Exception as e:
-                traceback.print_exc()
-                #pass            
+                traceback.print_exc()       #will output any errors to console but keep going
             torrentlist[key]["path"] = after
             if after.endswith(".mp3") or after.endswith(".flac"):     #.mp3 .flac = I personally didnt have any "Single file" .ogg, .aac, etc that needed special handling in this manner
                 if torrentlist[key].has_key("targets"):                     #these lines are a quick fix, for an oversight in the uTorrent process. changing path is not enough

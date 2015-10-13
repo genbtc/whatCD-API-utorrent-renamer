@@ -8,16 +8,14 @@
 #
 # All original code by genBTC, 10/7/2015, version 0.1
 #
-# Alternate Script #3: Run alt3WhatCD-API_Downloader(by Hash).py to query the what.CD API by infoHash and pull down a response as JSON and dump to files
+# Script #2: Run 3WhatCD-API_Downloader(by ID).py to query the what.CD API by torrentID and pull down a response as JSON and dump to files
 #
-# whatapi was edited slightly to change time.sleep(2) to be time.sleep(0) when issuing a request
-# # Querying Based on ID's is WAYYY faster.. (46 requests in 60sec) vs. 20-22 items per minute with hash as a query
-# napkin calculations:
-#    Even though 2 seconds per request is correct (max 5 requests in 10 secs), the server has its own delays
-# # in 60 seconds, we got 16 requests with 1 second of sleep each
-# # time.sleep(1) * 46 = 16 seconds of sleep in internal waits
-# # 44 seconds of actual server time per 16 requests = 2.75 seconds per request
-# # Need 1 request every 2 seconds, so do not need to sleep at all.
+# Querying Based on ID's is WAYYY faster.. Able to hit 46 requests in a minute with time.sleep(1)...... need to increase wait time a little.
+#napkin calculations:
+#in 60 seconds, we got 46 requests with 1 second of sleep each
+#time.sleep(1) * 46 = 46 seconds of sleep in internal waits
+#14 seconds of actual server time per 46 requests = 0.30434782608695652173913043478261 seconds per request
+#Need 1 request every 2 seconds, so need to sleep for 1.7 seconds
 
 import whatapi
 import cPickle as pickle
@@ -35,27 +33,32 @@ def main():
     password = credentials[1].strip()
       
     apihandle = whatapi.WhatAPI(config_file=None,username=username,password=password,cookies=cookies)
-
-    #Can use torrentID instead of hashes if you use the word "id" instead of "hash" in the query
-    filenamewithhashes  = "E:\\rename-project\\seeding-HashOnly.txt"
+    
+    #Can use hashes instead of torrentID if you use the word "hash" instead of "id" in the query
+    filenamewithIDs  = "E:\\rename-project\\seeding-ID+Hash.txt"
     hashdir="E:\\rename-project\\hash-grabs\\"      #output dir
 
-    with open(filenamewithhashes,'r') as f:
-        for currentHash in islice(f.read().splitlines(),currentline,None):     #will continue where it left off
-            #currentHash = "E7A5718EC52633FCCB1EA85656AA0622543994D7"   #test hash for debugging
+    openedfile = open(filenamewithIDs,'r').readlines()
+    for eachline in islice(openedfile,currentline,None):     #will continue where it left off
+        idandhash = eachline.strip().split(' / ')
+        currentID = idandhash[0]
+        currentHash = idandhash[1]        
+        if not os.path.exists(os.path.join(hashdir,currentHash)):
             try:
-                response = apihandle.request(0, "torrent", hash=currentHash)["response"]       #talk to server and receive a response. the 0 means time.sleep(0).
+                response = apihandle.request(1.75, "torrent", id=currentID)["response"]       #talk to server and receive a response
             except whatapi.RequestException as e:
                 currentline += 1
                 print currentline, " ERROR. Your search did not match anything."                
                 continue
+            currentHash = response["torrent"]["infoHash"]
             outfile = open(os.path.join(hashdir,currentHash), 'w')        
             json.dump(response,outfile)
             outfile.close()
             currentline += 1
-            print currentline, ": ", currentHash
+            print currentline, ": ", currentID
 
     pickle.dump(apihandle.session.cookies, open("E:\\rename-project\\scripts\\cookies.dat", 'wb'))  #store cookies when script ends, for next-run.
+    print "Download Complete."
 
 if __name__ == "__main__":
     main()

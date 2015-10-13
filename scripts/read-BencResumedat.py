@@ -8,13 +8,6 @@
 # Version 0.1 - functional since 10/9/2015.
 #
 # Read uTorrent resume.dat and make a text file of EVERY torrent inside's "path", "caption", "infoHash"
-#
-# Script #1: Master list of all the torrents you are seeding on what.cd (Profile -> Seeding [Download zip])
-#           This is needed because this is the only way to properly get the "Artist" field as it was formatted by Gazelle (hard to believe but true)
-#   reason: the API returns a RAW List of composers,dj,producers,conductor,remixedby,and artists and Gazelle uses this script-(i believe)
-#           https://github.com/WhatCD/Gazelle/blob/master/classes/artists.class.php to format it as Human-readable with such intricacies as:
-#               if ((count($Composers) > 0) && (count($Composers) < 3) && (count($MainArtists) > 0)) {
-#                   $link .= ' performed by ';}
 
 import base64
 import bencode

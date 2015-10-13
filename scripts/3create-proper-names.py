@@ -3,14 +3,15 @@
 
 # Written under Python 2.7 for Windows, not tested on Python 3
 #
-# Code by genBTC. Created from scratch 10/6/2015.  Relies on other pre-requisite steps 1,2,3 that I scripted also.
+# Code by genBTC. Created from scratch 10/6/2015.  Relies on other pre-requisite steps 1,2 that I scripted also.
 #   
 # Version 0.1 - functional since 10/9/2015.
 #
-# Script #4: Renames all your what.cd downloads to have a proper and uniform name.
+# Script #3: Renames all your what.cd downloads to have a proper and uniform name.
 #       All naming decisions happen here. You should/must edit this file to suit yourself, especially "Sorted_Record_Labels_List" 
-#       This program takes the results of Script #1,#2,#3 and re-builds from scratch the desired filename.
+#       This program takes the results of Script #1,#2  and re-builds from scratch the desired filename.
 #       This was built specific to my needs, the what and why of which needs explaining:
+#
 # FUNCTIONALITY notes:
 #
 #   1. The Sorted_Record_Labels_List is a list of record labels that I wish to store SORTED by the catalog number such as [DMZ001] (at the start of the filename)
@@ -33,7 +34,6 @@
 #       to re-name the filePath inside a BEncode Editor, because this will change the value of the infoHash and will come up as "Torrent not recognized"
 #   10. Please wait for the next program if you want to continue seeding these renamed files.
 #
-#   
 # PROGRAMMATICALLY, the following is explained:
 #
 #   1. Useful comments were left along the way as i went
@@ -166,6 +166,7 @@ def main():
     currentfilenumber = 1
 
     writelistfile = codecs.open(u"E:\\rename-project\\propernames.txt",'wb',"utf-8") # write-out a text file with one entry per line.
+    writelistcontainer = []
     hashtofilenamefolder= u"E:\\rename-project\\hash-grabs-as-filenames\\"
 
     for hashidfilename in allfiles:  #iterate through filenames of what.cd JSON data
@@ -349,15 +350,18 @@ def main():
                         pass
 
                     ########-------------replace characters section----------------#########
-                    newEntry.createdpropername = newEntry.createdpropername.replace("\\",u"＼")
-                    newEntry.createdpropername = newEntry.createdpropername.replace("/",u"／")
-                    newEntry.createdpropername = newEntry.createdpropername.replace(":",u"꞉") #u" ׃"
-                    newEntry.createdpropername = newEntry.createdpropername.replace("*",u"※")
-                    newEntry.createdpropername = newEntry.createdpropername.replace("?",u"؟")
-                    newEntry.createdpropername = newEntry.createdpropername.replace('"',u"ʺ")
-                    newEntry.createdpropername = newEntry.createdpropername.replace("<",u"˂")
-                    newEntry.createdpropername = newEntry.createdpropername.replace(">",u"˃")
-                    newEntry.createdpropername = newEntry.createdpropername.replace("|",u"ǀ")
+                    newEntry.createdpropername = newEntry.createdpropername.replace("\\",u"＼")          #U+FF3C               FULLWIDTH REVERSE SOLIDUS
+                    #these forward slashes are strange. "FullWidth" is very wide and would be too wide if theres already spaces around it. 
+                    newEntry.createdpropername = newEntry.createdpropername.replace(" / ",u"／")         #U+FFOF  (wide)       FULLWIDTH SOLIDUS
+                    #"Division" slash is too narrow and needs spaces inserted surrounding it (and is still less width than the fullwidth)
+                    newEntry.createdpropername = newEntry.createdpropername.replace("/",u" ∕ ")         #U+2215  (narrow)     DIVISION SLASH
+                    newEntry.createdpropername = newEntry.createdpropername.replace(":",u"꞉")           #U+A789               MODIFIER LETTER COLON
+                    newEntry.createdpropername = newEntry.createdpropername.replace("*",u"※")          #U+203B               REFERENCE MARK
+                    newEntry.createdpropername = newEntry.createdpropername.replace("?",u"؟")           #U+061F               ARABIC QUESTION MARK
+                    newEntry.createdpropername = newEntry.createdpropername.replace('"',u"ʺ")           #U+02BA               MODIFIER LETTER DOUBLE PRIME
+                    newEntry.createdpropername = newEntry.createdpropername.replace("<",u"˂")           #U+02C2               MODIFIER LETTER LEFT ARROWHEAD
+                    newEntry.createdpropername = newEntry.createdpropername.replace(">",u"˃")           #U+02C3               MODIFIER LETTER RIGHT ARROWHEAD
+                    newEntry.createdpropername = newEntry.createdpropername.replace("|",u"ǀ")           #U+01C0               LATIN LETTER DENTAL CLICK
                     #####--windows filename banned chars replacement with unicode--#########
 
                     ######----------HashGrabs-as-Filenames--------########
@@ -369,13 +373,15 @@ def main():
                     #     print currentfilenumber,hashidfilename,newEntry.createdpropername
                     #     print "**"*80
                     
-                    #####------------make propernames.txt (has the hash in it also) ---------######## 
-                    ##File Output. The Master List file of everything.##
-                    #(would be equivalent to the dir list of the dir we just outputted to, but also has hashes)
-                    writelistfile.write(newEntry.createdpropername + " / " + infoHash + "\n")
-                    #
-
                     currentfilenumber += 1
+                #####------------make propernames.txt (has the hash in it also) ---------######## 
+    ##File Output. The Master List file of everything.##
+                    #Add it to the container (since this is in a loop)
+                    writelistcontainer.append(newEntry.createdpropername + " / " + infoHash + "\n")
+    #when the loop exits, Sort it, and write it to the file.
+    writelistcontainer.sort()
+    for eachline in writelistcontainer:
+            writelistfile.write(eachline)
     writelistfile.close()
 
 

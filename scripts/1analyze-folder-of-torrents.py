@@ -7,12 +7,18 @@
 #   
 # Version 0.1 - functional since 10/9/2015.
 #
-# Analyze a folder of .torrent's, and write 2 files containing options such as infohash, torrentID, filename, internalname (utorrent "caption")
+# Analyze a folder of .torrent's, and write out text files containing options such as infohash, torrentID, filename, internalname (utorrent "caption")
 #
-# Script #2: Run analyze-folder-of-torrents.py on the contents of your seeding.zip to generate a master list containing the torrentID,
+# Script #1: Run analyze-folder-of-torrents.py on the contents of your seeding.zip to generate a master list containing the torrentID, name, hash
 #           automatically calculates/SHA1 hashes each torrent's [info] dict to get the info-hash
 #           AND most importantly the artist along with the rest of the filename including such info as:
-#           example:   Nirvana - Nevermind - 2013 (Blu-ray - FLAC - 24bit Lossless)-31112621.torrent
+#               example:   Nirvana - Nevermind - 2013 (Blu-ray - FLAC - 24bit Lossless)-31112621.torrent
+#   Info:   Master list of all the torrents you are seeding on what.cd (Profile -> Seeding [Download zip])
+#           This is needed because this is the only way to properly get the "Artist" field as it was formatted by Gazelle (hard to believe but true)
+#   reason: the API returns a RAW List of composers,dj,producers,conductor,remixedby,and artists and Gazelle uses this script-(i believe)
+#           https://github.com/WhatCD/Gazelle/blob/master/classes/artists.class.php to format it as Human-readable with such intricacies as:
+#               if ((count($Composers) > 0) && (count($Composers) < 3) && (count($MainArtists) > 0)) {
+#                   $link .= ' performed by ';}
 
 import bencode
 import base64
@@ -119,7 +125,7 @@ def main():
     # for eachline in container:
     #     writelistfile.write(eachline[2] + u" / " + eachline[0] + " / " + eachline[1] + "\n")
     # writelistfile.close()
-    writelistfile = codecs.open(u"E:\\rename-project\\seeding_Hash_-_Torr.txt",'wb',"utf-8") # write-out a text file with [infohash \n filename]
+    writelistfile = codecs.open(u"E:\\rename-project\\seeding_Hash_-_Torr.txt",'wb',"utf-8") # write-out a text file with [infohash, \n , filename]
     for eachline in container:
         writelistfile.write(eachline[2] + "\n")
         writelistfile.write(eachline[0] + "\n")
@@ -138,11 +144,11 @@ def main():
     # writelistfile.close()
 
     #------Idea 6---------
-    writelistfile = codecs.open(u"E:\\rename-project\\seeding-ID+Hash.txt",'wb',"utf-8") # write-out a text file with only ID
+    writelistfile = codecs.open(u"E:\\rename-project\\seeding-ID+Hash.txt",'wb',"utf-8") # write-out a text file with ID and Hash (on one line)
     for eachline in container:
         locextension = eachline[0].find(".torrent")           #location of extension
         locid = eachline[0].rfind("-")+1                      #location of torrentID
-        torrentid = eachline[0][locid:locextension]      #grab torrentID 
+        torrentid = eachline[0][locid:locextension]           #grab torrentID 
         writelistfile.write(torrentid + " / " + eachline[2] + "\n")     #output ID / Hash
     writelistfile.close()
 
