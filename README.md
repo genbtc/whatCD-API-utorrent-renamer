@@ -27,7 +27,7 @@ The naming decisions take place in Script 3 and contain MY DEFAULTS. In the futu
    
 2. Create a "credentials.txt" in the scripts\ folder containing your whatcd username on the first line and your whatcd password on the second line
 
-3. Delete the file in the hash-grabs\ dir and the hash-grabs-as-filenames\ dir. (I only put that there to make a blank dir on github)
+3. Delete the files in the hash-grabs\ and hash-grabs-as-filenames\ dirs. (I only put them there to make blank dirs on github)
    Then, delete the blank text file that I put in the seeding\ folder, because you will do what it says in the next step.
 
 4. Go on your profile on whatcd and on the bottom-right-corner, find "Seeding: [Show stats] [View] [Download]" and click the Download link to download a zipfile of all the torrents you are seeding named username's-Seeding.zip.
@@ -63,13 +63,9 @@ Reads the results of Script 3 and makes a textfile list of hashes and proper nam
 Perhaps you want to capture the "wikiBody" information inside it and dump them into a .txt file in the music folder. 
 Perhaps you want to capture the wikiImage to download album art.
 #### *altpre1sort-folder-of-torrents-by-tracker.py*
-Note: has not been updated to use the settings.ini file
-Takes a large dumpfolder of torrents, and sort them into folders based on which tracker it has in the ["announce"] field.
-(useful if you save every torrent from every site like me)
+Takes a large dumpfolder of torrents, and sort them into folders based on which tracker it has in the ["announce"] field. (useful if you save every torrent from every site like me)
 Note: There is an issue where some torrents use an ["announce-list"] field to list multiple trackers. This makes them go into the "None" folder. You can easily fix this with a bit of python, but it didn't affect me much.
 #### *alt2WhatCD-API_Downloader(by Hash).py*
-Note: has not been updated to use the settings.ini file.
-Note: has not been updated to work out of the box.
 If for some reason you arent using the seeding.zip and instead you chose to use the results of "altpre1sort-folder-of-torrents-by-tracker.py", then the torrents likely will not have the -TorrentID appended onto the end of them. In that case, you will need to use THIS Downloader (by Hash) which is slower. I have not figured out any other faster way to get ID's out of an hash, and the query to the API to get the ID is the same time/work as returning the entire JSON dict.... Just stick to the normal script.... literally:)
-#### *Dependencies*: Bencode.py, BTL.py, munkres.py, whatapi.py (contain my modifications)
-#### *Unused*: bencode2en.py, torrent-torrent.py, torrent-group.py
+#### *Dependencies*: settings.py, bencode.py, BTL.py, munkres.py, whatapi.py (contain my modifications)
+#### *Unused*: bencode2en.py

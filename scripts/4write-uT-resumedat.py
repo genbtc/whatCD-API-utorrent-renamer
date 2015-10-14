@@ -31,7 +31,7 @@ def main():
     ss = Preferences()
 
     oldfile = open(ss.get("utresumedat"),'rb').read()
-    newfile = open(os.path.join(ss.get("maindir"),"NEWDAT.dat"),'wb')
+    newfile = open(os.path.join(ss.get("maindir"),u"NEWDAT.dat"),'wb')
     namesandhashfile = open(ss.getwpath("outpath3"),'rb').readlines()
 
     beforeafterpath = ss.getwpath("outpath4")   #this holds the intermediate changes to happen before actually renaming so you have a chance to edit/change it. (4beforepath-afterpath.txt)

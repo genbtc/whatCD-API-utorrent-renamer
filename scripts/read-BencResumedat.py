@@ -71,7 +71,7 @@ def main():
 
     torrentlist = bdecodetext(datfile)
 
-    writelistfile = open(os.path.join(ss.get("maindir"),"TorrentList.txt"),'w') # write-out a text file with one entry per line.
+    writelistfile = open(os.path.join(ss.get("maindir"),u"TorrentList.txt"),'w') # write-out a text file with one entry per line.
     for eachline in torrentlist:
         writelistfile.write(eachline[0] + " / " + eachline[1] + " / " + base64.b16encode(eachline[2]) + "\n")
         					#path 			/	#caption		  /		#infohash

@@ -24,24 +24,29 @@ import cPickle as pickle
 import json
 import os
 from itertools import islice
+from settings import Preferences
 
 def main():
+    ss = Preferences()
 
     currentline = 0   #to resume a broken download. set this to the last SUCCESSFUL number (due to 1 starting at 0) that you see was outputted to console
 
-    cookies = pickle.load(open("E:\\rename-project\\scripts\\cookies.dat", 'rb'))   #cookies speed up the HTTP (supposedly)
-    credentials = open("E:\\rename-project\\scripts\\credentials.txt", 'rb').readlines()  #store credentials in another file and .git-ignore it
+    cookies = pickle.load(open(ss.getwpath("cookiesfile"), 'rb'))   #cookies speed up the HTTP (supposedly)
+    credentials = open(ss.getwpath("credentialsfile"), 'rb').readlines()  #store credentials in another file and .git-ignore it
     username = credentials[0].strip()
     password = credentials[1].strip()
-      
+          
     apihandle = whatapi.WhatAPI(config_file=None,username=username,password=password,cookies=cookies)
 
-    #Can use torrentID instead of hashes if you use the word "id" instead of "hash" in the query
-    filenamewithhashes  = "E:\\rename-project\\seeding-HashOnly.txt"
-    hashdir="E:\\rename-project\\hash-grabs\\"      #output dir
+    filenamewithIDs = ss.getwpath("outpath2")   # ("1seeding_ID+Hash.txt")
+    hashdir = ss.getwpath("script2destdir")      #output dir
 
-    with open(filenamewithhashes,'r') as f:
-        for currentHash in islice(f.read().splitlines(),currentline,None):     #will continue where it left off
+    openedfile = open(filenamewithIDs,'r').readlines()
+    for eachline in islice(openedfile,currentline,None):     #will continue where it left off
+        idandhash = eachline.strip().split(' / ')
+        currentID = idandhash[0]
+        currentHash = idandhash[1]     
+        if not os.path.exists(os.path.join(hashdir,currentHash)):
             #currentHash = "E7A5718EC52633FCCB1EA85656AA0622543994D7"   #test hash for debugging
             try:
                 response = apihandle.request(0, "torrent", hash=currentHash)["response"]       #talk to server and receive a response. the 0 means time.sleep(0).
@@ -49,13 +54,13 @@ def main():
                 currentline += 1
                 print currentline, " ERROR. Your search did not match anything."                
                 continue
-            outfile = open(os.path.join(hashdir,currentHash), 'w')        
-            json.dump(response,outfile)
-            outfile.close()
+            with open(os.path.join(hashdir,currentHash), 'w') as outfile:
+                json.dump(response,outfile, sort_keys = True)
             currentline += 1
             print currentline, ": ", currentHash
 
-    pickle.dump(apihandle.session.cookies, open("E:\\rename-project\\scripts\\cookies.dat", 'wb'))  #store cookies when script ends, for next-run.
+    pickle.dump(apihandle.session.cookies, open(ss.getwpath("cookiesfile"), 'wb'))  #store cookies when script ends, for next-run.
+    print "Download Complete."
 
 if __name__ == "__main__":
     main()

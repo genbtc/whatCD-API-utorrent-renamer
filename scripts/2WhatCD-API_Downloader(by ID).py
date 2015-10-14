@@ -8,7 +8,7 @@
 #
 # All original code by genBTC, 10/7/2015, version 0.1
 #
-# Script #2: Run 3WhatCD-API_Downloader(by ID).py to query the what.CD API by torrentID and pull down a response as JSON and dump to files
+# Script #2: Run 2WhatCD-API_Downloader(by ID).py to query the what.CD API by torrentID and pull down a response as JSON and dump to files
 #
 # Querying Based on ID's is WAYYY faster.. Able to hit 46 requests in a minute with time.sleep(1)...... need to increase wait time a little.
 #napkin calculations:
@@ -36,7 +36,7 @@ def main():
     
     apihandle = whatapi.WhatAPI(config_file=None,username=username,password=password,cookies=cookies)
     
-    filenamewithIDs = ss.getwpath("outpath2")
+    filenamewithIDs = ss.getwpath("outpath2")   # ("1seeding_ID+Hash.txt")
     hashdir = ss.getwpath("script2destdir")      #output dir
 
     openedfile = open(filenamewithIDs,'r').readlines()
@@ -45,16 +45,15 @@ def main():
         currentID = idandhash[0]
         currentHash = idandhash[1]        
         if not os.path.exists(os.path.join(hashdir,currentHash)):
+            #currentHash = "E7A5718EC52633FCCB1EA85656AA0622543994D7"   #test hash for debugging
             try:
                 response = apihandle.request(1.75, "torrent", id=currentID)["response"]       #talk to server and receive a response
             except whatapi.RequestException as e:
                 currentline += 1
                 print currentline, " ERROR. Your search did not match anything."                
                 continue
-            currentHash = response["torrent"]["infoHash"]
-            outfile = open(os.path.join(hashdir,currentHash), 'w')        
-            json.dump(response,outfile, sort_keys = True)
-            outfile.close()
+            with open(os.path.join(hashdir,currentHash), 'w') as outfile:
+                json.dump(response,outfile, sort_keys = True)
             currentline += 1
             print currentline, ": ", currentID
 

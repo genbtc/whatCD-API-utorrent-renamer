@@ -15,6 +15,7 @@ import os
 import hashlib
 from urlparse import urlparse
 import time
+from settings import Preferences
 
 def bdecodetext(text):
     torrentnamelist = []    #container (list) = (will only ever contain 1 string cause...lazy. will rewrite later)
@@ -69,8 +70,9 @@ def bdecodetext(text):
 
 
 def main():
+    ss = Preferences()
 
-    directory_path = u"E:\\rename-project\\D-All-Torr\\"    #needs a unicode symbol so os. commands work at all on paths with funny chars
+    directory_path = os.path.join(ss.get("maindir"),u"All-Torrs\\")    #needs a unicode symbol so os. commands work at all on paths with funny chars
 
     files = [os.path.join(directory_path,fn) for fn in next(os.walk(directory_path))[2]]        #gives absolute paths + names
 
@@ -81,8 +83,6 @@ def main():
             except:
                 tracker = "None"
         torrentfilename = eachfile[eachfile.rfind("\\")+1:]
-
-        #print tracker, " / ", torrentfilename          #errors out when console can't print codepage
 
         if not os.path.exists(directory_path + tracker):
             os.makedirs(directory_path + tracker)
