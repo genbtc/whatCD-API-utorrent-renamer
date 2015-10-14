@@ -27,7 +27,7 @@ The naming decisions take place in Script 3 and contain MY DEFAULTS. In the futu
    
 2. Create a "credentials.txt" in the scripts\ folder containing your whatcd username on the first line and your whatcd password on the second line
 
-3. Delete the file in the hash-grabs\ dir (I only put that there to make a blank dir on github)
+3. Delete the file in the hash-grabs\ dir and the hash-grabs-as-filenames\ dir. (I only put that there to make a blank dir on github)
    Then, delete the blank text file that I put in the seeding\ folder, because you will do what it says in the next step.
 
 4. Go on your profile on whatcd and on the bottom-right-corner, find "Seeding: [Show stats] [View] [Download]" and click the Download link to download a zipfile of all the torrents you are seeding named username's-Seeding.zip.
