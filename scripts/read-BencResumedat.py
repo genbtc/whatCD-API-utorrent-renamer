@@ -11,6 +11,8 @@
 
 import base64
 import bencode
+from settings import Preferences
+import os.path
 
 def bdecodetext(text):
     torrentlist = []    #set up an empty container for desired data to get put into for later
@@ -63,15 +65,13 @@ def bdecodetext(text):
 
 def main():
 
-    #olddat = "E:\\rename-project\\settings.dat"
-    #olddat = "E:\\rename-project\\EntireDAT.dat"
-    #olddat = "C:\\uTorrents\\2\\resume.dat"    
-    olddat = "C:\\Users\\EOFL\\AppData\\Roaming\\uTorrent\\resume.dat"
+    ss = Preferences()
+    dat = ss.get("utresumedat")
+    datfile = open(dat,'rb').read()
 
-    datfile = open(olddat,'rb').read()
     torrentlist = bdecodetext(datfile)
 
-    writelistfile = open("E:\\rename-project\\TorrentList.txt",'w') # write-out a text file with one entry per line.
+    writelistfile = open(os.path.join(ss.get("maindir"),"TorrentList.txt"),'w') # write-out a text file with one entry per line.
     for eachline in torrentlist:
         writelistfile.write(eachline[0] + " / " + eachline[1] + " / " + base64.b16encode(eachline[2]) + "\n")
         					#path 			/	#caption		  /		#infohash

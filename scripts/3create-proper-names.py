@@ -57,8 +57,10 @@
 # *DONE*refactor->create a class or wrapper function to hold the response[] (the shell of which can be borrowed from torrent-torrent.py,torrent-group.py)
 # *DONE*(see bottom)profile performance and figure out what is the most cpu intensive part, and improve performance
 # use multiple threads to process many things at once. (Caps out at 12% per Core) so 8 threads would be way faster, and SSD usage is at a minimum (1-5%)
-# Unify the tor.torrent.encoding schemes and remove as many conversions as possible and just stick to unicode for everything.
-# lastly,create better way to interface with people other than myself / editing source code magic strings
+# Figure out a better way to reduce the exponential nature of this file (first loop has X entries, nested loop has X entries, so thats X^2).
+# Unify the encoding schemes and remove as many conversions as possible and just stick to unicode for everything.
+# *DONE*create better way to interface with people other than myself / editing source code magic strings (added settings.ini Config file)
+
 
 import bencode
 import base64
@@ -76,7 +78,7 @@ import HTMLParser
 import shutil
 import difflib
 from torrentclass import Torrent
-
+from settings import Preferences
 
 class ReleaseType(Enum):
     Unspecified = 0
@@ -154,7 +156,6 @@ class TorrentEntry:
         self.createdpropername = None
         self.fmttdMediaEncodeFormat = ""
 
-
 def getUniqueWords(iterable):
     seen = set()
     result = []
@@ -166,18 +167,19 @@ def getUniqueWords(iterable):
 
 
 def main():
-    global fmttdcatalogueNumber
-    hashtorrlistfile = u"E:\\rename-project\\seeding_Hash_-_Torr.txt"
-    directory_path = u"E:\\rename-project\\hash-grabs\\"  # needs a unicode symbol so os. commands work at all on paths with funny chars
-    allfiles = [os.path.join(directory_path, fn) for fn in
-                next(os.walk(directory_path))[2]]  # gives absolute paths + names
 
-    currentfilenumber = 1
+    global fmttdcatalogueNumber     #to fix an issue with scope (line 330,333).
 
-    writelistfile = codecs.open(u"E:\\rename-project\\propernames.txt", 'wb',
-                                "utf-8")  # write-out a text file with one entry per line.
+    ss = Preferences()
+    hashtorrlistfile = ss.getwpath("outpath1")
+    directory_path = ss.getwpath("script2destdir")   #as source dir (hash-grabs)
+    allfiles = [os.path.join(directory_path, filename) for filename in next(os.walk(directory_path))[2]]  # gives absolute paths + names
+
+    hashtofilenamefolder = ss.getwpath("script3destdir") #as dest dir (hash-grabs-as-filenames)
+    writelistfile = codecs.open(ss.getwpath("outpath3"), 'wb', "utf-8")  # write-out a text file with one entry per line. main output file (3propernames.txt)
+
     writelistcontainer = []
-    hashtofilenamefolder = u"E:\\rename-project\\hash-grabs-as-filenames\\"
+    currentfilenumber = 1
 
     for hashidfilename in allfiles:  # iterate through filenames of what.cd JSON data
 
@@ -223,7 +225,7 @@ def main():
                         # If all the words in the old label is encompassed in the new one, use the new one.
                         # This would mean the new edition record label is most likely longer and is similar enough to use that,
                         # and preferred, since its more applicable to this specific release anyway.
-                        # Even if the reverse is true, this code-block should only catch labels that differ in slight ways.
+                        # Even if the reverse is true, this code-block should only catch labels that differ in slight ways.(?)
 
                         # example 1: originallabel={Big Beat Records}  remasterlabel={Big Beat}          #elif new label in old label
                         #   result:     {Big Beat}                                                      #or
@@ -259,6 +261,8 @@ def main():
             iterhashfile = open(hashtorrlistfile, 'rb').readlines()  # read everything into memory
             for i in xrange(0, len(iterhashfile), 2):  # read (hashes) on every other line
                 # ntpath.basename was really slow so doing it manually.... (32 times faster)= 0.128 seconds vs 0.004 seconds
+                # whats happening here is due to an exponential nested for loop, ie: 4129 results^2 = 17 million function calls of either basename or .rfind('\\')
+                # there should be a better way to do this.
                 hashfilesepidloc = hashidfilename.rfind("\\") + 1
                 if iterhashfile[i].strip() == hashidfilename[hashfilesepidloc:]:  # if it matches, start processing
                     newEntry = TorrentEntry()  # instanciate class
@@ -291,12 +295,12 @@ def main():
                     newEntry.createdpropername += "(" + str(tor.group.year) + ")"
 
                     # written like this for easy humanreading
-                    #           tor.torrent.format = MP3, FLAC, AAC,
-                    #          tor.torrent.media = cd, web, vinyl, soundboard, dat
-                    #        tor.torrent.encoding = lossless,320,v0,256,v2,192
+                    #           format = MP3, FLAC, AAC,
+                    #          media = cd, web, vinyl, soundboard, dat
+                    #        encoding = lossless,320,v0,256,v2,192
                     if tor.torrent.format == "FLAC":
                         newEntry.fmttdMediaEncodeFormat = "FLAC"
-                        # log and tor.torrent.logscore only applicable to flac.
+                        # log and logscore only applicable to flac.
                         if tor.torrent.hasLog:
                             newEntry.fmttdMediaEncodeFormat += " " + str(
                                 tor.torrent.logScore) + "%"  # the % implies "log" so leave out the word log
@@ -327,7 +331,7 @@ def main():
                     if tor.group.catalogueNumber:
                         fmttdcatalogueNumber = ("[" + tor.group.catalogueNumber + "]").replace(" ", "").upper()
                     elif tor.group.recordLabel:
-                        fmttdcatalogueNumber = "[" + tor.group.recordLabel + "]"  # combines with next part to put the tor.group.recordLabel in the front if Cat# missing
+                        fmttdcatalogueNumber = "[" + tor.group.recordLabel + "]"  # combines with next part to put recordLabel in the front if Cat# missing
 
                     if any(word in tor.group.recordLabel.lower() for word in Sorted_Record_Labels_List):  # so not case sensitive
                         newEntry.createdpropername = fmttdcatalogueNumber + " " + newEntry.createdpropername
@@ -366,16 +370,12 @@ def main():
                     # File output. Move all files named as hashes to a new dir as the proper name
                     if not os.path.exists(hashtofilenamefolder + newEntry.createdpropername):
                         shutil.copy(hashidfilename, hashtofilenamefolder + newEntry.createdpropername)
-                    # else:
-                    #     #print "**"*80
-                    #     print currentfilenumber,hashidfilename,newEntry.createdpropername
-                    #     print "**"*80
 
                     currentfilenumber += 1
                     #####------------make propernames.txt (has the hash in it also) ---------########
-                    ##File Output. The Master List file of everything.##
                     # Add it to the container (since this is in a loop)
                     writelistcontainer.append(newEntry.createdpropername + " / " + tor.torrent.infoHash + "\n")
+    ##File Output. The Master List file of everything.##                    
     # when the loop exits, Sort it, and write it to the file.
     writelistcontainer.sort()
     for eachline in writelistcontainer:

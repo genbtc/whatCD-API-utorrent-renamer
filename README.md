@@ -23,33 +23,35 @@ You should know some programming language, even if its not python because python
 I used as many comments and descriptive variable names as I could to document what is going on
 The naming decisions take place in Script 3 and contain MY DEFAULTS. In the future I will adapt this github to be more generic.
 
-1. Download this repository as a .zip file (button over there >>>^^^^^) and extract it to E:\rename-project\
-   If you extract it somewhere else, you will need to change all the paths in all the scripts.
+1. Download this repository as a .zip file (button over there >>>^^^^^) and extract it somewhere, ie: E:\rename-project\
    
 2. Create a "credentials.txt" in the scripts\ folder containing your whatcd username on the first line and your whatcd password on the second line
 
-3. Go on your profile on whatcd and on the bottom-right-corner, find "Seeding: [Show stats] [View] [Download]" and click the Download link to download a zipfile of all the torrents you are seeding named username's-Seeding.zip.
-   This can be fairly large (52MB for 4163 files) but does not count towards your ratio. Open it, go  into the subfolder containing the torrents, and Extract them all to the seeding\ dir.
-   To be clear, you should have *.torrent files in \seeding\ now and nothing else.
+3. Delete the file in the hash-grabs\ dir (I only put that there to make a blank dir on github)
+   Then, delete the blank text file that I put in the seeding\ folder, because you will do what it says in the next step.
 
-4. Open the scripts 1-4 in your text editor and modify the directory paths to match up or do a bulk-find-and-replace on E:\\rename-project\\
-   Make sure you use double backslashes for your paths. This is how it needs to be done for python on windows.  
-   Script 4 contains a path/reference to C:\Users\EOFL\Appdata\Local\utorrent\resume.dat, make sure you change "EOFL" to your username, or change the entire path to point to your resume.dat
-   Don't worry your resume file will not be written to.
+4. Go on your profile on whatcd and on the bottom-right-corner, find "Seeding: [Show stats] [View] [Download]" and click the Download link to download a zipfile of all the torrents you are seeding named username's-Seeding.zip.
+   This can be fairly large (52MB for 4163 files) but does not count towards your ratio. Then open the .zip of torrents you downloaded, go into the subfolder containing the torrents themselves, and Extract them all to the seeding\ dir.
+   To be clear, you should have *.torrent files in seeding\ now and nothing else (do not extract the summary file or the dated folder).
 
-5. Delete the file in the hash-grabs\ dir (I only put that there to make a blank dir on github)
-
-6. Run Script 1 and 2 and wait for 2 to complete(hours). Each one should generate a text file in the rename-project\ parent dir. You should inspect these to see what happened. 
-   Also don't worry, you will only have to run script 2 once.
-   While you are waiting for script 2, open Script #3 and start reading the comments/documentation
-   At this point you will need to figure out the renaming pattern I scripted, and modify it to suit yourself.
+5. Run Script 1 and 2 and wait for 2 to complete. #2 might take hours but, don't worry, you will only have to run script 2 once.
+   Each one should generate some text files in the rename-project\ parent dir. You should inspect these to see what happened. 
+   While you are waiting for script 2, open Script #3 in a text editor and start reading the comments/documentation.
+   At this point you will need to figure out the torrent renaming pattern I scripted, and modify it to suit yourself.
    
-7. Run Script 3. It will generate a text file containing the newly decided names, which you should check, and then run Script 4.
+6. Run Script 3. It will generate a text file ("3propernames.txt") containing the newly decided names, which you should double-check that the script made good decisions.
+   (Don't edit this file. You will have a chance to do that later).
+  
+7. At this point you need to edit scripts\settings.ini and provide it the proper location to utorrent's resume.dat file. Do not edit anything else in there.
 
-8. Halfway through Script 4, it gives you the chance to modify any files in the text file "beforepath-afterpath.txt" You should examine this and 
+8. Run Script 4. Halfway through Script 4 it will pause, and prompt you before renaming any files. This gives you the chance to edit any filenames in the text file "beforepath-afterpath.txt".
+   You should examine this and edit/change it to suit yourself. The next instructions are so you don't mess anything up while editing:
+   The format is OldPath1 / Hash1, (next line), NewPath1 / Hash1. The OldPath is on Line1, the NewPath is on Line2. Do NOT modify the OldPath or it wont be able to find it..... Only modify the 2nd line (The new path). The hash is duplicated on both lines for error checking in case the user accidentally bungles a character while editing... 
+   Also the " / " was put there as a seperator, Dont Modify that either and make sure theres not extra spaces.   
+   After you finish editing and save the text file, press [ENTER] to continue renaming and save the new resume.dat file as NEWDAT.dat.
 
-9. Shut down uTorrent, renaming your resume.dat file to resume.dat.old (remove the existing one), move the NEWDAT.dat that was created, and rename that to be the new resume.dat. 
-   At this point you can run the optional script: read-BencResumedat.py which will double-check your resume-dat file and output every single torrent inside's 3 relevant bits of info ("Caption","path","Hash") to a text file "TorrentList.txt" for those who are paranoid.    (to run this optional script you need to change the path its looking for the resume.dat file at)
+9. Shut down uTorrent (wait a few secs-check taskman), rename your current resume.dat file to resume.dat.old (remove the existing .old), move the NEWDAT.dat file into the right location, and rename that to be the new resume.dat. 
+   At this point you can run the optional script: "read-BencResumedat.py" which will double-check your resume-dat file and output every single torrent's 3 relevant bits of info ("Caption","path","Hash") to a text file "TorrentList.txt" for those who are paranoid.
 
 10. Start uTorrent, and marvel at your nicely renamed library and still seeding files :)
 
@@ -61,10 +63,13 @@ Reads the results of Script 3 and makes a textfile list of hashes and proper nam
 Perhaps you want to capture the "wikiBody" information inside it and dump them into a .txt file in the music folder. 
 Perhaps you want to capture the wikiImage to download album art.
 #### *altpre1sort-folder-of-torrents-by-tracker.py*
+Note: has not been updated to use the settings.ini file
 Takes a large dumpfolder of torrents, and sort them into folders based on which tracker it has in the ["announce"] field.
 (useful if you save every torrent from every site like me)
 Note: There is an issue where some torrents use an ["announce-list"] field to list multiple trackers. This makes them go into the "None" folder. You can easily fix this with a bit of python, but it didn't affect me much.
 #### *alt2WhatCD-API_Downloader(by Hash).py*
+Note: has not been updated to use the settings.ini file.
+Note: has not been updated to work out of the box.
 If for some reason you arent using the seeding.zip and instead you chose to use the results of "altpre1sort-folder-of-torrents-by-tracker.py", then the torrents likely will not have the -TorrentID appended onto the end of them. In that case, you will need to use THIS Downloader (by Hash) which is slower. I have not figured out any other faster way to get ID's out of an hash, and the query to the API to get the ID is the same time/work as returning the entire JSON dict.... Just stick to the normal script.... literally:)
 #### *Dependencies*: Bencode.py, BTL.py, munkres.py, whatapi.py (contain my modifications)
 #### *Unused*: bencode2en.py, torrent-torrent.py, torrent-group.py

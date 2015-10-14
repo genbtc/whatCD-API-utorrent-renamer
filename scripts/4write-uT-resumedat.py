@@ -9,17 +9,15 @@
 #
 # Script #4 - Make a new Resume.dat and commit the move/rename operations to disk
 #
-#Take the newly created proper names and open the Utorrent Resume.dat file and carefully replace the visual "Caption", and the actual path location.
-#theoretically you could only replace the path, but then if you use "Set download location" to move the download to a new parent folder in the future,
-#  it will use the caption to move it, and mess it up. So its better for the caption to match the path.
-#After we write a NEW utorrent file (dont modify the existing one...) we make a "before" and "after" path file, for historical reference reasons.
-# Changes are outputted to a text file first, and with this file as an intermediate, you can scroll through and look at whats happening. 
-# Before writing to utorrent resume.dat, or moving anything, it pauses until you press Enter to continue. 
-# Then the user can edit the file meticulously, save and proceed with the operation. The new resume.dat file is written according to the possibly edited file.
-# Only then does it move the folders on the filesystem (btw, its actually a rename operation = very fast).
+#1. Take the newly created proper names and open the Utorrent Resume.dat file and grabs 3 pieces of info, "caption,path,infohash".
+#2. After we write a NEW utorrent file (dont modify the existing one...) we make a "before" and "after" path file, for historical reference reasons.
+#3. Changes are outputted to a text file first, and with this file as an intermediate, you can scroll through and look at whats happening. 
+#4. Before writing to utorrent resume.dat, or moving anything, it pauses until you press Enter to continue. 
+#5. Then the user can edit the file meticulously, save and proceed with the operation. The new resume.dat file is written according to the possibly edited file.
+#6. Only then does it move the folders on the filesystem (btw, its actually a rename operation = very fast).
 #
 #Notes: This script was not very forgiving with the filename rename process: I think there should be some sort of better error handling, resume-on-error, undo, rollback or etc...
-#INFO:  Some fixes have been attemped.
+#INFO:  Some of the above fixes have been attemped. 10/14/2015
 
 import base64
 import bencode
@@ -27,16 +25,16 @@ import codecs
 import os.path
 import time
 import traceback
+from settings import Preferences
 
 def main():
-    #testdat = "E:\\rename-project\\EntireDAT.dat"
-    olddat = "C:\\Users\\EOFL\\AppData\\Roaming\\uTorrent\\resume.dat"
-    oldfile = open(olddat,'rb').read()
+    ss = Preferences()
 
-    newfile = open("E:\\rename-project\\NEWDAT.dat",'wb')
-    namesandhashfile = open(u"E:\\rename-project\\propernames.txt",'rb').readlines()
+    oldfile = open(ss.get("utresumedat"),'rb').read()
+    newfile = open(os.path.join(ss.get("maindir"),"NEWDAT.dat"),'wb')
+    namesandhashfile = open(ss.getwpath("outpath3"),'rb').readlines()
 
-    beforeafterpath = u"E:\\rename-project\\beforepath-afterpath.txt"   #this holds the intermediate changes to happen. will be written to before actually renaming so you have a chance to change it.
+    beforeafterpath = ss.getwpath("outpath4")   #this holds the intermediate changes to happen before actually renaming so you have a chance to edit/change it. (4beforepath-afterpath.txt)
 
     torrentlist = bencode.bdecode(oldfile)
 

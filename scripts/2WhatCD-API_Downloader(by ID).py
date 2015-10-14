@@ -22,21 +22,22 @@ import cPickle as pickle
 import json
 import os
 from itertools import islice
+from settings import Preferences
 
 def main():
+    ss = Preferences()
 
     currentline = 0   #to resume a broken download. set this to the last SUCCESSFUL number (due to 1 starting at 0) that you see was outputted to console
 
-    cookies = pickle.load(open("E:\\rename-project\\scripts\\cookies.dat", 'rb'))   #cookies speed up the HTTP (supposedly)
-    credentials = open("E:\\rename-project\\scripts\\credentials.txt", 'rb').readlines()  #store credentials in another file and .git-ignore it
+    cookies = pickle.load(open(ss.getwpath("cookiesfile"), 'rb'))   #cookies speed up the HTTP (supposedly)
+    credentials = open(ss.getwpath("credentialsfile"), 'rb').readlines()  #store credentials in another file and .git-ignore it
     username = credentials[0].strip()
     password = credentials[1].strip()
-      
+    
     apihandle = whatapi.WhatAPI(config_file=None,username=username,password=password,cookies=cookies)
     
-    #Can use hashes instead of torrentID if you use the word "hash" instead of "id" in the query
-    filenamewithIDs  = "E:\\rename-project\\seeding-ID+Hash.txt"
-    hashdir="E:\\rename-project\\hash-grabs\\"      #output dir
+    filenamewithIDs = ss.getwpath("outpath2")
+    hashdir = ss.getwpath("script2destdir")      #output dir
 
     openedfile = open(filenamewithIDs,'r').readlines()
     for eachline in islice(openedfile,currentline,None):     #will continue where it left off
@@ -52,12 +53,12 @@ def main():
                 continue
             currentHash = response["torrent"]["infoHash"]
             outfile = open(os.path.join(hashdir,currentHash), 'w')        
-            json.dump(response,outfile)
+            json.dump(response,outfile, sort_keys = True)
             outfile.close()
             currentline += 1
             print currentline, ": ", currentID
 
-    pickle.dump(apihandle.session.cookies, open("E:\\rename-project\\scripts\\cookies.dat", 'wb'))  #store cookies when script ends, for next-run.
+    pickle.dump(apihandle.session.cookies, open(ss.getwpath("cookiesfile"), 'wb'))  #store cookies when script ends, for next-run.
     print "Download Complete."
 
 if __name__ == "__main__":

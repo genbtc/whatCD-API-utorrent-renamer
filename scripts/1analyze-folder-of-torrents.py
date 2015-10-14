@@ -26,6 +26,7 @@ import sys
 import os
 import hashlib
 import codecs
+from settings import Preferences
 
 def bdecodetext(text):
     torrentnamelist = [] 
@@ -70,86 +71,37 @@ def bdecodetext(text):
 
 
 def main():
-
-    #directory_path = u"E:\\rename-project\\torrents1\\"
-    #directory_path = u"E:\\rename-project\\D-All-Torr\\tracker.what.cd\\"
-    #directory_path = u"D:\\RandomMisc\\ABC - filetime fakedata\\"
-    #directory_path = u"C:\\uTorrents\\2\\finished\\"
-    directory_path = u"E:\\rename-project\\seeding\\"
-
-    files = [os.path.join(directory_path,fn) for fn in next(os.walk(directory_path))[2]]        #gives absolute paths + names
+    ss = Preferences()
+    script1sourcedir = ss.getwpath("script1sourcedir")            #("seeding\")
+    files = [os.path.join(script1sourcedir,filename) for filename in next(os.walk(script1sourcedir))[2]]        #gives absolute paths + names
 
     container = []    #set up an empty container for desired data to get put into for later
     for eachfile in files:
         stringfile = open(eachfile,'rb').read()
         internalname = bdecodetext(stringfile)
         torrentfilename = eachfile[eachfile.rfind("\\")+1:]
+        locextension = torrentfilename.find(".torrent")           #location of extension (char position)
+        locid = torrentfilename.rfind("-")+1                      #location of torrentID (char position)
+        torrentid = torrentfilename[locid:locextension]           #grab torrentID 
 
         #need to manually SHA1 hash the torrent file's info-dict to get the info-hash
         metainfo = bencode.bdecode(stringfile)
         info = metainfo['info']
         info_hash = hashlib.sha1(bencode.bencode(info)).hexdigest().upper()
         
-        container.append([torrentfilename, internalname, info_hash])
+        container.append([torrentfilename, internalname, info_hash, torrentid])
 
-    #------Idea 1---------
-    # writelistfile = open(u"E:\\rename-project\\Torrent-to-Name_MappingList.txt",'w') # write-out a text file with [filename,internalname,infohash]
-    # for eachline in container:
-    #     writelistfile.write(eachline[0] + " / " + eachline[1] + " / " + eachline[2] + "\n")
-    # writelistfile.close()
-    # writelistfile = open(u"E:\\rename-project\\Name-to-Torrent_MappingList.txt",'w') # write-out a text file with [internalname,filename,infohash]
-    # for eachline in container:
-    #     writelistfile.write(eachline[1] + " / " + eachline[0] + " / " + eachline[2] + "\n")
-    # writelistfile.close()
-
-    #------Idea 2---------(using codecs.open to write and utf-8 encoding)
-    # writelistfile = codecs.open(u"E:\\rename-project\\D-All-Torr\\ALLTorrent-to-Name_List.txt",'wb',"utf-8") # write-out a text file with [filename,internalname,infohash]
-    # for eachline in container:
-    #     writelistfile.write(eachline[0] + u" / " + eachline[1] + " / " + eachline[2] + "\n")
-    # writelistfile.close()
-    # writelistfile = codecs.open(u"E:\\rename-project\\D-All-Torr\\ALLName-to-Torrent_List.txt",'wb',"utf-8") # write-out a text file with [internalname,filename,infohash]
-    # for eachline in container:
-    #     writelistfile.write(eachline[1] + u" / " + eachline[0] + " / " + eachline[2] + "\n")
-    # writelistfile.close()
-
-    #------Idea 3---------
-    # writelistfile = codecs.open(u"E:\\rename-project\\seeding_TorrNameHash.txt",'wb',"utf-8") # write-out a text file with [filename,internalname,infohash]
-    # for eachline in container:
-    #     writelistfile.write(eachline[0] + u" / " + eachline[1] + " / " + eachline[2] + "\n")
-    # writelistfile.close()
-    # writelistfile = codecs.open(u"E:\\rename-project\\seeding_NameTorrHash.txt",'wb',"utf-8") # write-out a text file with [internalname,filename,infohash]
-    # for eachline in container:
-    #     writelistfile.write(eachline[1] + u" / " + eachline[0] + " / " + eachline[2] + "\n")
-    # writelistfile.close()
-    # writelistfile = codecs.open(u"E:\\rename-project\\seeding_HashTorrName.txt",'wb',"utf-8") # write-out a text file with [infohash,filename,internalname]
-    # for eachline in container:
-    #     writelistfile.write(eachline[2] + u" / " + eachline[0] + " / " + eachline[1] + "\n")
-    # writelistfile.close()
-    writelistfile = codecs.open(u"E:\\rename-project\\seeding_Hash_-_Torr.txt",'wb',"utf-8") # write-out a text file with [infohash, \n , filename]
+    #WRITE FILE 1
+    writelistfile = codecs.open(ss.getwpath("outpath1"),'wb',"utf-8") # write-out a text file with [infohash, \n , filename]    ("1seeding_Hash+Filename.txt")
     for eachline in container:
         writelistfile.write(eachline[2] + "\n")
         writelistfile.write(eachline[0] + "\n")
     writelistfile.close()
 
-    #------Idea 4---------
-    # writelistfile = codecs.open(u"E:\\rename-project\\seeding_TorrentName+ID.txt",'wb',"utf-8") # write-out a text file with only filename(includes ID)
-    # for eachline in container:
-    #     writelistfile.write(eachline[0] + "\n")
-    # writelistfile.close()
-
-    #------Idea 5---------
-    # writelistfile = codecs.open(u"E:\\rename-project\\seeding-HashOnly.txt",'wb',"utf-8") # write-out a text file with only infohash
-    # for eachline in container:
-    #     writelistfile.write(eachline[2] + "\n")
-    # writelistfile.close()
-
-    #------Idea 6---------
-    writelistfile = codecs.open(u"E:\\rename-project\\seeding-ID+Hash.txt",'wb',"utf-8") # write-out a text file with ID and Hash (on one line)
+    #WRITE FILE 2
+    writelistfile = codecs.open(ss.getwpath("outpath2"),'wb',"utf-8") # write-out a text file with torrentID and Hash (on one line) ("1seeding_ID+Hash.txt")
     for eachline in container:
-        locextension = eachline[0].find(".torrent")           #location of extension
-        locid = eachline[0].rfind("-")+1                      #location of torrentID
-        torrentid = eachline[0][locid:locextension]           #grab torrentID 
-        writelistfile.write(torrentid + " / " + eachline[2] + "\n")     #output ID / Hash
+        writelistfile.write(eachline[3] + " / " + eachline[2] + "\n")     #output torrentID / Hash
     writelistfile.close()
 
 
