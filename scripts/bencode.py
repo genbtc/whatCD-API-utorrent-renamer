@@ -19,7 +19,6 @@
 
 from BTL import BTFailure
 
-
 def decode_int(x, f):
     f += 1
     newf = x.index('e', f)
@@ -76,6 +75,15 @@ def bdecode(x):
     if l != len(x):
         raise BTFailure("invalid bencoded value (data after valid prefix)")
     return r
+
+def decode_from_file(path):
+    """Convenience function. Reads file and calls decode()."""
+    with open(path, 'rb') as f:
+        b = f.read()
+    return bdecode(b)
+
+#-------------------------------------------------------
+#-------------------------------------------------------
 
 from types import StringType, IntType, LongType, DictType, ListType, TupleType
 

@@ -1,5 +1,5 @@
 # whatCD-API-utorrent-renamer 
-For Windows (Python 2.7)
+For Windows, Python 2.7 - and now Python 3! (use scripts3 folder instead)
 ## Overall Description
 Queries the API for all your seeding torrents to download all possible metadata. 
 Renames all your what.cd downloads to have a proper and uniform name. 
@@ -15,7 +15,7 @@ The download is small (mine was 10.0MB for 4163 files) since it is just ~2-3KB o
 All naming decisions happen here. You should/must edit this file to suit yourself, especially "Sorted_Record_Labels_List" 
 This program takes the results of Script #1,#2 and re-builds from scratch the desired filename.
 ## Script #4: *4write-uT-resumedat.py*
-Make a new Resume.dat and commit the move/rename operations to disk
+Confirm new filenames,Make a new Resume.dat and commit the move/rename operations to disk
 
 ## Instructions:
 I tried to make this as straightforward as possible, but it's really advanced. 

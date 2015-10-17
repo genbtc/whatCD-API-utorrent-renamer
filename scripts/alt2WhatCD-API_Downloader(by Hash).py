@@ -6,7 +6,8 @@
 # Based on whatapi @ https://github.com/isaaczafuta/whatapi
 # JSON what.cd api documentation found @ https://github.com/WhatCD/Gazelle/wiki/JSON-API-Documentation
 #
-# All original code by genBTC, 10/7/2015, version 0.1
+# Version 0.1 = All original code by genBTC, 10/7/2015
+# Version 0.1a - now uses directory paths obtained from settings, ss.Preferences() 10/14/2015
 #
 # Alternate Script #2: Run alt2WhatCD-API_Downloader(by Hash).py to query the what.CD API by infoHash and pull down a response as JSON and dump to files
 #
@@ -31,7 +32,10 @@ def main():
 
     currentline = 0   #to resume a broken download. set this to the last SUCCESSFUL number (due to 1 starting at 0) that you see was outputted to console
 
-    cookies = pickle.load(open(ss.getwpath("cookiesfile"), 'rb'))   #cookies speed up the HTTP (supposedly)
+    try:
+        cookies = pickle.load(open(ss.getwpath("cookiesfile"), 'rb'))   #cookies speed up the HTTP (supposedly)
+    except:
+        cookies = None          #if we cant load it, don't use it.
     credentials = open(ss.getwpath("credentialsfile"), 'rb').readlines()  #store credentials in another file and .git-ignore it
     username = credentials[0].strip()
     password = credentials[1].strip()

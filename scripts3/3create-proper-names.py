@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*
 
-# Written under Python 2.7 for Windows, not tested on Python 3
+# Coded for Python 3 (tested under Python 3.5 for Windows 64-bit)
 #
 # Code by genBTC. Created from scratch 10/6/2015.  Relies on other pre-requisite steps 1,2 that I scripted also.
 #   
 # Version 0.1 - functional since 10/9/2015.
 # Version 0.1a - now uses directory paths obtained from settings, ss.Preferences() 10/14/2015
+# Version 0.1b - Changed code to target Python 3 @ 10/16/2015
 #
 # Script #3: Renames all your what.cd downloads to have a proper and uniform name.
 #       All naming decisions happen here. You should/must edit this file to suit yourself, especially "Sorted_Record_Labels_List" 
@@ -68,14 +69,20 @@ import base64
 import sys
 import os
 import hashlib
-from urlparse import urlparse
+try:
+    from urlparse import urlparse
+except:
+    import urllib.parse as urlparse
 import time
 import json
 from enum import Enum
 import ntpath
 import re
 import codecs
-import HTMLParser
+try:
+    import HTMLParser
+except:
+    import html.parser as HTMLParser
 import shutil
 import difflib
 from torrentclass import Torrent
@@ -258,18 +265,18 @@ def main():
                                 else:
                                     tor.group.catalogueNumber = tor.torrent.remasterCatalogueNumber
                         tor.group.recordLabel = new
+
             hashfilesepidloc = hashidfilename.rfind("\\") + 1
-            cmphashfn = hashidfilename[hashfilesepidloc:]            
-            iterhashfile = open(hashtorrlistfile, 'rb').readlines()  # read everything into memory
-            for i in xrange(0, len(iterhashfile), 2):  # read (hashes) on every other line
+            cmphashfn = hashidfilename[hashfilesepidloc:]
+            iterhashfile = open(hashtorrlistfile, 'r',encoding='utf-8').readlines()  # read everything into memory
+            for i in range(0, len(iterhashfile), 2):  # read (hashes) on every other line
                 # ntpath.basename was really slow so doing it manually.... (32 times faster)= 0.128 seconds vs 0.004 seconds
                 # whats happening here is due to an exponential nested for loop, ie: 4129 results^2 = 17 million function calls of either basename or .rfind('\\')
                 # there should be a better way to do this.
-
                 if iterhashfile[i].strip() == cmphashfn:  # if it matches, start processing
                     newEntry = TorrentEntry()  # instanciate class
                     newEntry.hash = iterhashfile[i].strip()  # store Hash for reference
-                    newEntry.pathname = iterhashfile[i + 1].strip().decode("utf-8")  # filename + extension
+                    newEntry.pathname = iterhashfile[i + 1].strip()  # filename + extension
                     locextension = newEntry.pathname.find(".torrent")  # location of extension
                     locid = newEntry.pathname.rfind("-") + 1  # location of tor.torrent.id
                     newEntry.filename = newEntry.pathname[:locextension]  # chop the extension off (manually)
@@ -286,7 +293,7 @@ def main():
 
                     # ------------Recreate name------------#
                     # -------Special RULES SECTION---------#
-                    newEntry.createdpropername = newEntry.artist + u" - " + tor.group.name + " "
+                    newEntry.createdpropername = newEntry.artist + " - " + tor.group.name + " "
                     if tor.group.releaseType > 1:  # dont put it for Album or Unspecified
                         if tor.group.releaseType != 5:  # do something different for EP
                             newEntry.createdpropername += fmttdreleaseTypeName + " "
@@ -348,24 +355,24 @@ def main():
                         newEntry.createdpropername += "." + tor.torrent.format.lower()
 
                     try:
-                        print currentfilenumber, newEntry.createdpropername
+                        print(currentfilenumber, newEntry.createdpropername)
                     except:
-                        print "COULD NOT PRINT UNICODE FILENAME TO CONSOLE. HASH=", tor.torrent.infoHash
+                        print("COULD NOT PRINT UNICODE FILENAME TO CONSOLE. HASH=", tor.torrent.infoHash)
                         # pass
 
                     ########-------------replace characters section----------------#########
-                    newEntry.createdpropername = newEntry.createdpropername.replace("\\",u"＼")  # U+FF3C               FULLWIDTH REVERSE SOLIDUS
+                    newEntry.createdpropername = newEntry.createdpropername.replace("\\","＼")  # U+FF3C               FULLWIDTH REVERSE SOLIDUS
                     # these forward slashes are strange. "FullWidth" is very wide and would be too wide if theres already spaces around it.
-                    newEntry.createdpropername = newEntry.createdpropername.replace(" / ",u"／")  # U+FFOF  (wide)       FULLWIDTH SOLIDUS
+                    newEntry.createdpropername = newEntry.createdpropername.replace(" / ","／")  # U+FFOF  (wide)       FULLWIDTH SOLIDUS
                     # "Division" slash is too narrow and needs spaces inserted surrounding it (and is still less width than the fullwidth)
-                    newEntry.createdpropername = newEntry.createdpropername.replace("/",u" ∕ ")  # U+2215  (narrow)     DIVISION SLASH
-                    newEntry.createdpropername = newEntry.createdpropername.replace(":",u"꞉")  # U+A789               MODIFIER LETTER COLON
-                    newEntry.createdpropername = newEntry.createdpropername.replace("*",u"※")  # U+203B               REFERENCE MARK
-                    newEntry.createdpropername = newEntry.createdpropername.replace("?",u"؟")  # U+061F               ARABIC QUESTION MARK
-                    newEntry.createdpropername = newEntry.createdpropername.replace('"',u"ʺ")  # U+02BA               MODIFIER LETTER DOUBLE PRIME
-                    newEntry.createdpropername = newEntry.createdpropername.replace("<",u"˂")  # U+02C2               MODIFIER LETTER LEFT ARROWHEAD
-                    newEntry.createdpropername = newEntry.createdpropername.replace(">",u"˃")  # U+02C3               MODIFIER LETTER RIGHT ARROWHEAD
-                    newEntry.createdpropername = newEntry.createdpropername.replace("|",u"ǀ")  # U+01C0               LATIN LETTER DENTAL CLICK
+                    newEntry.createdpropername = newEntry.createdpropername.replace("/"," ∕ ")  # U+2215  (narrow)     DIVISION SLASH
+                    newEntry.createdpropername = newEntry.createdpropername.replace(":","꞉")  # U+A789               MODIFIER LETTER COLON
+                    newEntry.createdpropername = newEntry.createdpropername.replace("*","※")  # U+203B               REFERENCE MARK
+                    newEntry.createdpropername = newEntry.createdpropername.replace("?","؟")  # U+061F               ARABIC QUESTION MARK
+                    newEntry.createdpropername = newEntry.createdpropername.replace('"',"ʺ")  # U+02BA               MODIFIER LETTER DOUBLE PRIME
+                    newEntry.createdpropername = newEntry.createdpropername.replace("<","˂")  # U+02C2               MODIFIER LETTER LEFT ARROWHEAD
+                    newEntry.createdpropername = newEntry.createdpropername.replace(">","˃")  # U+02C3               MODIFIER LETTER RIGHT ARROWHEAD
+                    newEntry.createdpropername = newEntry.createdpropername.replace("|","ǀ")  # U+01C0               LATIN LETTER DENTAL CLICK
                     #####--windows filename banned chars replacement with unicode--#########
 
                     ######----------HashGrabs-as-Filenames--------########
@@ -388,44 +395,28 @@ def main():
 if __name__ == "__main__":
     main()
 
-#if __name__ == "__main__":    
-#     import cProfile, pstats
-#     cProfile.run("main()", "{}.profile".format(__file__))
-#     s = pstats.Stats("{}.profile".format(__file__))
-#     s.strip_dirs()
-#     s.sort_stats("time").print_stats(25)
-#     ##PROFILING:
-    
+    # PROFILING:
+    # if __name__ == "__main__":
+    #     import cProfile, pstats
+    #     cProfile.run("main()", "{}.profile".format(__file__))
+    #     s = pstats.Stats("{}.profile".format(__file__))
+    #     s.strip_dirs()
+    #     s.sort_stats("time").print_stats(16)
 
-#With already existing hash-grabs-as-filenames
- #         18742202 function calls (18742175 primitive calls) in 11.404 seconds
 
- #   Ordered by: internal time
- #   List reduced from 186 to 25 due to restriction <25>
-
- #   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
- #        1    5.217    5.217   11.403   11.403 3create-proper-names.py:170(main)
- #     4174    3.453    0.001    3.453    0.001 {method 'readlines' of 'file' objects}
- # 17393006    1.053    0.000    1.053    0.000 {method 'strip' of 'str' objects}
- #     8380    0.257    0.000    0.257    0.000 {open}
- #     4204    0.245    0.000    0.245    0.000 decoder.py:372(raw_decode)
- #     4136    0.137    0.000    0.137    0.000 {nt.stat}
- #     4204    0.118    0.000    0.296    0.000 torrentclass.py:65(load)
- #     4204    0.108    0.000    0.108    0.000 {method 'read' of 'file' objects}
- #     4204    0.081    0.000    0.277    0.000 torrentclass.py:28(load)
- #    79876    0.070    0.000    0.104    0.000 HTMLParser.py:102(reset)
- #    28713    0.069    0.000    0.077    0.000 HTMLParser.py:450(replaceEntities)
- #   138015    0.059    0.000    0.077    0.000 3create-proper-names.py:338(<genexpr>)
- #     4526    0.050    0.000    0.126    0.000 {method 'sub' of '_sre.SRE_Pattern' objects}
- #   176568    0.050    0.000    0.050    0.000 {setattr}
- #     4204    0.041    0.000    0.041    0.000 {nt._isdir}
- #    79876    0.034    0.000    0.034    0.000 markupbase.py:37(reset)
- #    79876    0.030    0.000    0.133    0.000 HTMLParser.py:98(__init__)
- #   176629    0.029    0.000    0.029    0.000 {isinstance}
- #    79876    0.023    0.000    0.161    0.000 HTMLParser.py:447(unescape)
- #   134952    0.018    0.000    0.018    0.000 {method 'lower' of 'unicode' objects}
- #     4204    0.016    0.000    0.401    0.000 __init__.py:257(load)
- #    16824    0.015    0.000    0.020    0.000 ntpath.py:96(splitdrive)
- #    44704    0.015    0.000    0.015    0.000 {method 'replace' of 'unicode' objects}
- #     4163    0.013    0.000    0.013    0.000 {_codecs.charmap_encode}
- #     4204    0.013    0.000    0.013    0.000 torrentclass.py:35(__init__)
+    # Sun Oct 11 00:19:57 2015    create-proper-names.py.profile
+    #          35543736 function calls (35543709 primitive calls) in 28.724 seconds
+    #    Ordered by: internal time
+    #    List reduced from 171 to 10 due to restriction <10>
+    #
+    #    ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+    #         1   14.085   14.085   28.723   28.723 create-proper-names.py:175(main)
+    #  17309720    4.716    0.000    4.716    0.000 {method 'rfind' of 'unicode' objects}
+    #      4161    4.478    0.001    4.478    0.001 {method 'readlines' of 'file' objects}
+    #  17313841    1.725    0.000    1.725    0.000 {method 'strip' of 'str' objects}
+    #     16565    1.007    0.000    1.007    0.000 {open}
+    #      4120    0.501    0.000    1.700    0.000 shutil.py:66(copyfile)
+    #     16481    0.492    0.000    0.492    0.000 {nt.stat}
+    #      4163    0.349    0.000    0.349    0.000 decoder.py:372(raw_decode)
+    #     12418    0.251    0.000    0.251    0.000 {method 'read' of 'file' objects}
+    #      4120    0.152    0.000    0.152    0.000 {nt.chmod}

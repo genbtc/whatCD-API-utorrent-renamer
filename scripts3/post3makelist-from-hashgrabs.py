@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*
 
-# Written under Python 2.7 for Windows, not tested on Python 3
+# Coded for Python 3 (tested under Python 3.5 for Windows 64-bit)
 #
 # Code by genBTC. Created from scratch 10/6/2015.  Relies on other pre-requisite steps that I scripted also.
 #   
 # Version 0.1 - functional since 10/9/2015.
 # Version 0.1a - now uses directory paths obtained from settings, ss.Preferences() 10/16/2015
+# Version 0.1b - Changed code to target Python 3 @ 10/16/2015
 #
 # Preliminary program to make a list of hashes and proper names to be used later. Was combined into the main Script #3.
 

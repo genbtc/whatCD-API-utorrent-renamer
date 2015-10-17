@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*
 #
-# Written under Python 2.7 for Windows, not tested on Python 3
+# Coded for Python 3 (tested under Python 3.5 for Windows 64-bit)
 #
 # Code by genBTC. Created from scratch 10/6/2015.
 #   
 # Version 0.1 - functional since 10/9/2015.
 # Version 0.1a - now uses directory paths obtained from settings, ss.Preferences() 10/14/2015
+# Version 0.1b - Changed code to target Python 3 @ 10/16/2015
 #
 # Analyze a folder of .torrent's, and write out text files containing options such as infohash, torrentID, filename, internalname (utorrent "caption")
 #
@@ -21,16 +22,17 @@
 #               if ((count($Composers) > 0) && (count($Composers) < 3) && (count($MainArtists) > 0)) {
 #                   $link .= ' performed by ';}
 
-import bencode
 import os
 import hashlib
 import codecs
 from settings import Preferences
+import decoder
+import encode
 
 
 def main():
     ss = Preferences()
-    script1sourcedir = ss.getwpath(u"script1sourcedir")+u''            #("seeding\"), needs unicode u for file opening.
+    script1sourcedir = ss.getwpath("script1sourcedir")            #("seeding\")
     files = [os.path.join(script1sourcedir,filename) for filename in next(os.walk(script1sourcedir))[2]]        #gives absolute paths + names
 
     currentfile = 0
@@ -38,12 +40,12 @@ def main():
     container = []    #set up an empty container for desired data to get put into for later
     for eachfile in files:
 
-        metainfo = bencode.decode_from_file(eachfile)
+        metainfo = decoder.decode_from_file(eachfile)
         # #need to manually SHA1 hash the torrent file's info-dict to get the info-hash
-        infodict = metainfo['info']
-        info_hash = hashlib.sha1(bencode.bencode(infodict)).hexdigest().upper()
+        infodict = metainfo[b'info']
+        info_hash = hashlib.sha1(encode.encode(infodict)).hexdigest().upper()
 
-        internalname = infodict['name']
+        internalname = infodict[b'name']
         torrentfilename = eachfile[eachfile.rfind("\\")+1:]
         locextension = torrentfilename.find(".torrent")           #location of extension (char position)
         locid = torrentfilename.rfind("-")+1                      #location of torrentID (char position)
@@ -51,8 +53,9 @@ def main():
       
         container.append([torrentfilename, internalname, info_hash, torrentid])
         currentfile += 1 
-        print currentfile, torrentfilename.encode('ascii', errors='ignore')     #console output is ascii only, cannot print unicode - chars are omitted
+        print(currentfile, torrentfilename.encode('ascii', errors='ignore').decode())        #console output is ascii only, cannot print unicode - chars are omitted
 
+    #WRITE FILE 1
     # #WRITE FILE 1
     # writelistfile = codecs.open(ss.getwpath("outpath1"),'wb',"utf-8") # write-out a text file with [infohash, \n , filename]    ("1seeding_Hash+Filename.txt")
     # for eachline in container:

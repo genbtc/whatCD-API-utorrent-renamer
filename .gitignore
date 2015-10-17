@@ -56,6 +56,7 @@ docs/_build/
 # PyBuilder
 target/
 
-scripts/cookies.dat
-scripts/credentials.txt
-scripts/settings.ini
+*/cookies.dat
+*/credentials.txt
+*/settings.ini
+*.py.profile

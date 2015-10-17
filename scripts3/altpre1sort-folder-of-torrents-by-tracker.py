@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*
 #
-# Written under Python 2.7 for Windows, not tested on Python 3
-#not Coded for Python 3 (tested under Python 3.5 for Windows 64-bit)
+# Coded for Python 3 (tested under Python 3.5 for Windows 64-bit)
 #
 # Code by genBTC. Created from scratch 10/6/2015.  Relies on other pre-requisite steps that I scripted also.
 #   
