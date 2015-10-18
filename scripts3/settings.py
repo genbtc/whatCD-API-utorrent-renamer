@@ -29,8 +29,7 @@ class Preferences():
     
     # filenames needs a unicode u symbol so os. commands work on paths with funny chars
     script1sourcedir = u"seeding\\"
-    outpath1 = "1seeding_Hash+Filename.txt"
-    outpath2 = "1seeding_ID+Hash.txt"
+    outpath1 = "1seeding_ID+Hash+Filename.txt"
 
     credentialsfile = "scripts3\\credentials.txt"
     cookiesfile = "scripts3\\cookies.dat"
@@ -63,7 +62,6 @@ class Preferences():
         self.set('maindir', self.maindir)
         self.set('script1sourcedir', self.script1sourcedir)
         self.set('outpath1', self.outpath1)
-        self.set('outpath2', self.outpath2)
         self.set('credentialsfile', self.credentialsfile)
         self.set('cookiesfile', self.cookiesfile)
         self.set('script2destdir', self.script2destdir)

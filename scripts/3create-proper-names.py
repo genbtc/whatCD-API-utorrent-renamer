@@ -172,7 +172,7 @@ def main():
     global fmttdcatalogueNumber     #to fix an issue with scope (line 330,333).
 
     ss = Preferences()
-    hashtorrlistfile = ss.getwpath("outpath1")
+    hashtorrlistfile = ss.getwpath("outpath1")			#("1seeding_ID+Hash+Filename.txt")
     directory_path = ss.getwpath("script2destdir")   #as source dir (hash-grabs)
     allfiles = [os.path.join(directory_path, filename) for filename in next(os.walk(directory_path))[2]]  # gives absolute paths + names
 
@@ -258,31 +258,29 @@ def main():
                                 else:
                                     tor.group.catalogueNumber = tor.torrent.remasterCatalogueNumber
                         tor.group.recordLabel = new
+
+            # ntpath.basename was really slow so doing it manually.... (32 times faster)= 0.128 seconds vs 0.004 seconds
+            # whats happening here is due to an exponential nested for loop, ie: 4129 results^2 = 17 million function calls of either basename or .rfind('\\')
+            # there should be a better way to do this.                        
             hashfilesepidloc = hashidfilename.rfind("\\") + 1
             cmphashfn = hashidfilename[hashfilesepidloc:]            
             iterhashfile = open(hashtorrlistfile, 'rb').readlines()  # read everything into memory
-            for i in xrange(0, len(iterhashfile), 2):  # read (hashes) on every other line
-                # ntpath.basename was really slow so doing it manually.... (32 times faster)= 0.128 seconds vs 0.004 seconds
-                # whats happening here is due to an exponential nested for loop, ie: 4129 results^2 = 17 million function calls of either basename or .rfind('\\')
-                # there should be a better way to do this.
-
-                if iterhashfile[i].strip() == cmphashfn:  # if it matches, start processing
+            for i in iterhashfile:  # read line
+                splitline = i.strip().split(' / ')      # 0 torrentID / 1 Hash / 2 torrentfilename
+                if splitline[1] == cmphashfn:  # if it matches, start processing
                     newEntry = TorrentEntry()  # instanciate class
-                    newEntry.hash = iterhashfile[i].strip()  # store Hash for reference
-                    newEntry.pathname = iterhashfile[i + 1].strip().decode("utf-8")  # filename + extension
+                    newEntry.hash = splitline[1]  # store Hash for reference
+                    newEntry.pathname = splitline[2].decode("utf-8")  # filename + extension
                     locextension = newEntry.pathname.find(".torrent")  # location of extension
                     locid = newEntry.pathname.rfind("-") + 1  # location of tor.torrent.id
                     newEntry.filename = newEntry.pathname[:locextension]  # chop the extension off (manually)
                     newEntry.artistalbum = newEntry.filename[:locid - 1]  # JUST the name (no ID#)
-                    newEntry.torrentid = newEntry.filename[
-                                         locid:locextension]  # grab ID for future reference (tor.torrent.id on what.cd)
+                    newEntry.torrentid = newEntry.filename[locid:locextension]  # grab ID for future reference (tor.torrent.id on what.cd)
                     # example : S-Type - Billboard (Lido Remix) - 2014 (WEB - MP3 - 320)
                     newEntry.artist = newEntry.artistalbum[:newEntry.artistalbum.find(" - ")]  # grab artist
-                    tempalbum = newEntry.artistalbum[newEntry.artistalbum.find(
-                        " - ") + 3:]  # temp value helps with string processing
+                    tempalbum = newEntry.artistalbum[newEntry.artistalbum.find(" - ") + 3:]  # temp value helps with string processing
                     newEntry.album = tempalbum[:tempalbum.find(" - ")]  # not needed since it can be pulled from [group]
-                    newEntry.year = tempalbum[tempalbum.find(" - ") + 3:tempalbum.find(
-                        " - ") + 7]  # not needed since it can be pulled from [group]
+                    newEntry.year = tempalbum[tempalbum.find(" - ") + 3:tempalbum.find(" - ") + 7]  # not needed since it can be pulled from [group]
 
                     # ------------Recreate name------------#
                     # -------Special RULES SECTION---------#
@@ -348,10 +346,9 @@ def main():
                         newEntry.createdpropername += "." + tor.torrent.format.lower()
 
                     try:
-                        print currentfilenumber, newEntry.createdpropername
+                        print currentfilenumber, newEntry.createdpropername.encode('ascii', errors='ignore')
                     except:
                         print "COULD NOT PRINT UNICODE FILENAME TO CONSOLE. HASH=", tor.torrent.infoHash
-                        # pass
 
                     ########-------------replace characters section----------------#########
                     newEntry.createdpropername = newEntry.createdpropername.replace("\\",u"＼")  # U+FF3C               FULLWIDTH REVERSE SOLIDUS

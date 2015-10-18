@@ -67,15 +67,12 @@ def main():
     listofbeforeafter.sort()
     beforeafterfile = open(beforeafterpath,'w',encoding='utf-8')
     for eachline in listofbeforeafter:
-        #try:
         beforeafterfile.write(eachline[0] + " / " + eachline[2] + "\n")         #write oldpath + hash on 1st line    /The hash is duplicated for error checking in case the user accidentally bungles a character while editing...
         beforeafterfile.write(eachline[1] + " / " + eachline[2] + "\n")         #write newpath + hash on 2nd line   /
-        #except:            
-        #    print("Error writing the before+after file, probably a encoding/unicode error: \n", eachline[0],"\n",eachline[1])
     beforeafterfile.close()
 
     #At this point the script pauses, and asks the user to confirm changes shown in the beforepath-afterpath.txt file
-#    input("Press Enter to begin Renaming files.......\\> ")  #wait for the user to press Enter before continuing with anything.
+    input("Press Enter to begin Renaming files.......\\> ")  #wait for the user to press Enter before continuing with anything.
 
     #WRITE TORRENT RESUME.DAT
     beforeafterfile = open(beforeafterpath,'r',encoding='utf-8').readlines()

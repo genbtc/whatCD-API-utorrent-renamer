@@ -17,7 +17,8 @@
 #Reason: Encode functions were not unicode compatible..... 
 #Status: Not completely unicode compatible yet.
 
-from BTL import BTFailure
+class BTFailure(Exception):
+    pass
 
 def decode_int(x, f):
     f += 1

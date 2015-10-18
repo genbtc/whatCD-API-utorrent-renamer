@@ -53,15 +53,8 @@ def main():
         currentfile += 1 
         print currentfile, torrentfilename.encode('ascii', errors='ignore')     #console output is ascii only, cannot print unicode - chars are omitted
 
-    # #WRITE FILE 1
-    # writelistfile = codecs.open(ss.getwpath("outpath1"),'wb',"utf-8") # write-out a text file with [infohash, \n , filename]    ("1seeding_Hash+Filename.txt")
-    # for eachline in container:
-    #     writelistfile.write(eachline[2] + "\n")
-    #     writelistfile.write(eachline[0] + "\n")
-    # writelistfile.close()
-
-    #WRITE FILE 2
-    writelistfile = codecs.open(ss.getwpath("outpath2"),'wb',"utf-8") # write-out a text file with torrentID and Hash (on one line) ("1seeding_ID+Hash.txt")
+    #WRITE FILE 1
+    writelistfile = codecs.open(ss.getwpath("outpath1"),'wb',"utf-8") # write-out a text file with torrentID and Hash (on one line) ("1seeding_ID+Hash+Filename.txt")
     for eachline in container:
         writelistfile.write(eachline[3] + " / " + eachline[2] + " / " + eachline[0] + "\n")     #output torrentID / Hash / torrentfilename
     writelistfile.close()

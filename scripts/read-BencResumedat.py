@@ -12,7 +12,6 @@
 import base64
 from settings import Preferences
 import os.path
-import codecs
 import bencode
 
 def main():

@@ -42,7 +42,7 @@ def main():
           
     apihandle = whatapi.WhatAPI(config_file=None,username=username,password=password,cookies=cookies)
 
-    filenamewithIDs = ss.getwpath("outpath2")   # ("1seeding_ID+Hash.txt")
+    filenamewithIDs = ss.getwpath("outpath1")   # ("1seeding_ID+Hash+Filename.txt")
     hashdir = ss.getwpath("script2destdir")      #output dir
 
     openedfile = open(filenamewithIDs,'r',encoding='utf-8').readlines()

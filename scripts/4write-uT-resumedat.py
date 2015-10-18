@@ -68,6 +68,8 @@ def main():
             beforeafterfile.write(eachline[1] + " / " + eachline[2] + "\n")         #write newpath + hash on 2nd line   /
         except:            
             print "Error writing the before+after file, probably a encoding/unicode error: \n", eachline[0],"\n",eachline[1]
+            print "This was a fatal error and program could not continue."
+            return
     beforeafterfile.close()
 
     #At this point the script pauses, and asks the user to confirm changes shown in the beforepath-afterpath.txt file
