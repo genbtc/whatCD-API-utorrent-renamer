@@ -34,7 +34,7 @@ The naming decisions take place in Script 3 and contain MY DEFAULTS. In the futu
    This can be fairly large (52MB for 4163 files) but does not count towards your ratio. Then open the .zip of torrents you downloaded, go into the subfolder containing the torrents themselves, and Extract them all to the seeding\ dir.
    To be clear, you should have *.torrent files in seeding\ now and nothing else (do not extract the summary file or the dated folder).
 
-5. Run Script 1 and 2 and wait for 2 to complete. #2 might take hours but, don't worry, you will only have to run script 2 once.
+5. Run Script 1 and 2 and wait for 2 to complete. Script #2 might take hours to download but, don't worry, it is resume capable and you will only have to download once.
    Each one should generate some text files in the rename-project\ parent dir. You should inspect these to see what happened. 
    While you are waiting for script 2, open Script #3 in a text editor and start reading the comments/documentation.
    At this point you will need to figure out the torrent renaming pattern I scripted, and modify it to suit yourself.
@@ -50,12 +50,18 @@ The naming decisions take place in Script 3 and contain MY DEFAULTS. In the futu
    Also the " / " was put there as a seperator, Dont Modify that either and make sure theres not extra spaces.   
    After you finish editing and save the text file, press [ENTER] to continue renaming and save the new resume.dat file as NEWDAT.dat.
 
-9. Shut down uTorrent (wait a few secs-check taskman), rename your current resume.dat file to resume.dat.old (remove the existing .old), move the NEWDAT.dat file into the right location, and rename that to be the new resume.dat. 
+9. Shut down uTorrent (wait a few secs + check task manager), rename your current resume.dat file to resume.dat.old (remove the existing .old), move the NEWDAT.dat file into the right location, and rename that to be the new resume.dat. 
    At this point you can run the optional script: "read-BencResumedat.py" which will double-check your resume-dat file and output every single torrent's 3 relevant bits of info ("Caption","path","Hash") to a text file "TorrentList.txt" for those who are paranoid.
 
-10. Start uTorrent, and marvel at your nicely renamed library and still seeding files :)
+10. Done! Start uTorrent, and marvel at your nicely renamed library and still seeding files :)
 
 ### Other Scripts are not part of the process: 
+#### *alt123pre4-RenameOnlyFromFilename.py* 
+Instead of running scripts 1,2,3 this just takes the name directly from torrent filename itself (with regex), and does not rely on any data from the What.CD API. Example: 
+Before: 501 - Crystallize EP - 2014 (WEB - MP3 - 320)-31846936.torrent
+After : 501 - Crystallize EP (2014) [WEB MP3 320]
+Keep in mind you will need to use regex on the file to get your desired results. I have included a quick guide in the comments of this script.
+This generates a text file that is ready to be used by Script #4 as per usual.
 #### *read-BencResumedat.py*
 Read uTorrent resume.dat and make a text file of EVERY torrent inside's "path", "caption", "infoHash"
 #### *post3makelist-from-hashgrabs.py*
@@ -67,5 +73,5 @@ Takes a large dumpfolder of torrents, and sort them into folders based on which 
 Note: There is an issue where some torrents use an ["announce-list"] field to list multiple trackers. This makes them go into the "None" folder. You can easily fix this with a bit of python, but it didn't affect me much.
 #### *alt2WhatCD-API_Downloader(by Hash).py*
 If for some reason you arent using the seeding.zip and instead you chose to use the results of "altpre1sort-folder-of-torrents-by-tracker.py", then the torrents likely will not have the -TorrentID appended onto the end of them. In that case, you will need to use THIS Downloader (by Hash) which is slower. I have not figured out any other faster way to get ID's out of an hash, and the query to the API to get the ID is the same time/work as returning the entire JSON dict.... Just stick to the normal script.... literally:)
-#### *Dependencies*: settings.py, bencode.py, BTL.py, munkres.py, whatapi.py (contain my modifications)
+#### *Dependencies*: torrentclass.py, settings.py, bencode.py, encoder.py, whatapi.py (contain my modifications)
 #### *Unused*: bencode2en.py
